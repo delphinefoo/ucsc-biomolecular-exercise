@@ -58,7 +58,6 @@ if (Meteor.isClient) {
 
     var totalCounts = {};
     var dataSet = [];
-    var divByLoc = {};
 
     patients.forEach(function(patient) {
       totalCounts[patient.disease] = totalCounts[patient.disease] + 1 || 1;
