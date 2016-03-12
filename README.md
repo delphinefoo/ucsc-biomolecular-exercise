@@ -1,6 +1,6 @@
 # Cancer count visualization
 
-You can view this data visualization at [ucsc-bio-delphine.meteor.com](http://ucsc-bio-delphine.meteor.com).
+You can interact with this data visualization at [ucsc-bio-delphine.meteor.com](http://ucsc-bio-delphine.meteor.com).
 
 ## Bugs found in original code:
 
