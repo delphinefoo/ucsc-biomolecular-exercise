@@ -4,55 +4,55 @@ if (Meteor.isClient) {
 
     var patients = [
       {
-          name: "patient1",
-          disease: "liver cancer",
-          location: "ohsu",
+          name: 'patient1',
+          disease: 'liver cancer',
+          location: 'ohsu',
       },
 
       {
-          name: "patient2",
-          disease: "kidney cancer",
-          location: "ucla",
-      },
-
-
-      {
-          name: "patient3",
-          disease: "lung cancer",
-          location: "ucsf",
+          name: 'patient2',
+          disease: 'kidney cancer',
+          location: 'ucla',
       },
 
 
       {
-          name: "patient4",
-          disease: "lung cancer",
-          location: "mskcc",
-      },
-
-      {
-          name: "patient5",
-          disease: "kidney cancer",
-          location: "ohsu",
-      },
-
-      {
-          name: "patient6",
-          disease: "lung cancer",
-          location: "ucla",
+          name: 'patient3',
+          disease: 'lung cancer',
+          location: 'ucsf',
       },
 
 
       {
-          name: "patient7",
-          disease: "lymphoma cancer",
-          location: "ucsf",
+          name: 'patient4',
+          disease: 'lung cancer',
+          location: 'mskcc',
+      },
+
+      {
+          name: 'patient5',
+          disease: 'kidney cancer',
+          location: 'ohsu',
+      },
+
+      {
+          name: 'patient6',
+          disease: 'lung cancer',
+          location: 'ucla',
       },
 
 
       {
-          name: "patient8",
-          disease: "lung cancer",
-          location: "mskcc",
+          name: 'patient7',
+          disease: 'lymphoma cancer',
+          location: 'ucsf',
+      },
+
+
+      {
+          name: 'patient8',
+          disease: 'lung cancer',
+          location: 'mskcc',
       }
     ];
 
@@ -64,7 +64,6 @@ if (Meteor.isClient) {
       totalCounts[patient.disease] = totalCounts[patient.disease] + 1 || 1;
     });
 
-    console.log(totalCounts);
 
     for (var key in totalCounts) {
       var obj = {};
@@ -78,8 +77,6 @@ if (Meteor.isClient) {
       dataSet.push(obj);
     }
 
-    console.log(dataSet);
-
     dataSet.forEach(function(cancerType) {
       cancerType.locations = [];
       for (var key in cancerType) {
@@ -91,27 +88,22 @@ if (Meteor.isClient) {
       }
     });
 
-    console.log(dataSet);
 
   Template.cancerCount.onRendered(function() {
-    var value_color_scale =  ["red", "green", "blue", "orange", "black", "yellow"];
+    var value_color_scale =  ['red', 'green', 'blue', 'orange', 'black', 'yellow'];
     var value_color_scale_i = 0;
     var value_color_map = {};
 
     function color_map(attribute, value) {
-      //create a key identified by the attribute and value
-      var key = attribute+";"+value;
-      //if the key exists in the object
+      var key = attribute+';'+value;
       if (!(key in value_color_map)) {
-        //set the value to the element at index found by incrementing color scale modulo length of array
-        value_color_map[attribute+";"+value] = value_color_scale[ value_color_scale_i++ % value_color_scale.length];
+        value_color_map[attribute+';'+value] = value_color_scale[ value_color_scale_i++ % value_color_scale.length];
       }
-      //return this value, which is the color in the array
       return value_color_map[key];
     }
 
 
-    var h = 300;
+    var h = 200;
     var w = 450;
 
     var svg = d3.select('#barChart')
@@ -122,9 +114,7 @@ if (Meteor.isClient) {
                    .data(dataSet)
                    .enter()
                    .append('rect')
-                   .attr('class', function(d) {
-                    return d.disease;
-                   })
+                   .attr('class', 'tooltip')
                    .attr('x', function(d, i) {
                     return i * 71;
                    })
@@ -138,10 +128,10 @@ if (Meteor.isClient) {
                    .attr('fill', function(d) {
                       return color_map(d.disease, d.qty);
                    })
-                   .append('svg:title')
-                   .text(function(d) {
-                    return d.disease;
-                   });
+
+    var div = d3.select('body').append('div')
+                .attr('class', 'tooltip')
+                .style('opacity', 0);
 
     var labelDiv = d3.select('body')
                      .append('div')
@@ -156,6 +146,30 @@ if (Meteor.isClient) {
                     .text(function(d) {
                       return d.disease + ': ' + d.qty + (d.qty > 1 ? ' cases' : ' case');
                     });
+
+
+    bars.on('mouseover', function(d) {
+            div.transition()
+                .duration(200)
+                .style('opacity', .9);
+            div.html(function() {
+              var str = '';
+              d.locations.forEach(function(loc) {
+                for (var key in loc) {
+                  str += key + ': ' + loc[key] + '<br />';
+                }
+              });
+              return str;
+            })
+                .style('left', (d3.event.pageX) + 'px')
+                .style('top', (d3.event.pageY - 28) + 'px');
+            })
+        .on('mouseout', function(d) {
+            div.transition()
+                .duration(500)
+                .style('opacity', 0);
+        });
+
   });
 
 }
